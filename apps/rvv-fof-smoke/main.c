@@ -4,13 +4,13 @@
 
 #include <klib.h>
 #include <stdint.h>
-#define MCONTROL_M          (1<<6)
-#define MCONTROL_LOAD       (1<<0)
-#define MCONTROL_STORE       (1<<1)
-#define MCONTROL_CHAIN      (1<<11)
+#define MCONTROL6_M          (1<<6)
+#define MCONTROL6_LOAD       (1<<0)
+#define MCONTROL6_STORE       (1<<1)
 #define TRIGGER_LOAD  0
 #define TRIGGER_STORE 1
 #define __riscv_xlen 64
+#define TDATA1_TYPE 6ULL // mcontrol6
 #define CAUSE_NONE 0
 #define CAUSE_BP   3
 
@@ -44,9 +44,9 @@ void check_and_print(int r_cause, int r_vl, int r_start){
 
 void setTrigger(unsigned long tdata2, int op){
     asm volatile(
-        "csrw tcontrol, 8\n\t"
         "csrw tselect, 1\n\t"
         "csrw tdata2, %0\n\t"
+        "csrs mstatus, 8\n\t"
         :
         : "r"(tdata2)
         :
@@ -56,7 +56,7 @@ void setTrigger(unsigned long tdata2, int op){
         asm volatile(
             "csrw tdata1, %0\n\t"
             :
-            : "r"((2ULL << (__riscv_xlen - 4)) | MCONTROL_M | MCONTROL_LOAD)
+            : "r"((TDATA1_TYPE << (__riscv_xlen - 4)) | MCONTROL6_M | MCONTROL6_LOAD)
             :
         );
     } else if (op == 1){
@@ -64,7 +64,7 @@ void setTrigger(unsigned long tdata2, int op){
         asm volatile(
             "csrw tdata1, %0\n\t"
             :
-            : "r"((2ULL << (__riscv_xlen - 4)) | MCONTROL_M | MCONTROL_STORE)
+            : "r"((TDATA1_TYPE << (__riscv_xlen - 4)) | MCONTROL6_M | MCONTROL6_STORE)
             :
         );
     } else {
