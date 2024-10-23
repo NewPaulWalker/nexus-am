@@ -1,0 +1,3 @@
+## etrigger
+
+该test测试在U模式下由非法指令触发的trigger，其优先处理trigger产生的BP，再在S模式下处理非法指令

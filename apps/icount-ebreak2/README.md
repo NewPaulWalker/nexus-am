@@ -1,0 +1,4 @@
+## icount
+
+该test由S模式下执行10条指令触发BP，且最后一条指令是ebreak
+其会先去到S模式处理ebreak触发异常导致的handle，然后返回到S模式，在执行下一条指令之前再次trap到S模式处理trigger触发的BP异常。
