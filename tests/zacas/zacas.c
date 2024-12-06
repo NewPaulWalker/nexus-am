@@ -292,6 +292,44 @@ void test_amocas() {
     check_and_print(CAUSE_NONE, rd_1, 0x800000009ULL, md_1, 0x800000009ULL);
 
     asm volatile(
+        "li t0, 0x81000008\n\t"
+        "li a0, 0\n\t"
+        "li a1, 5\n\t"
+        ".insn r 0x2f, 0x3, 0x14, a0, t0, a1\n\t"
+    );
+
+    asm volatile(
+        "li t0, 0x81000008\n\t"
+        "li a0, 1\n\t"
+        "li a1, 5\n\t"
+        ".insn r 0x2f, 0x3, 0x14, a0, t0, a1\n\t"
+    );
+
+    asm volatile(
+        "li t0, 0x81000000\n\t"
+        "li a2, 0\n\t"
+        "li a3, 0\n\t"
+        ".insn r 0x2f, 0x4, 0x14, a2, t0, a0\n\t"
+    );
+
+    asm volatile(
+        "li a3, 10\n\t"
+        "li t0, 0x81000000\n\t"
+        "li a0, 10\n\t"
+        "sd a0, 0(t0)\n\t"
+        "li a1, 5\n\t"
+        "amoadd.d a2, a1, 0(t0)\n\t"
+        "add a3, a3, a3\n\t"
+        "li a2, 0\n\t"
+        ".insn r 0x2f, 0x3, 0x14, a2, t0, a1\n\t"
+        ".insn r 0x2f, 0x3, 0x14, x0, t0, a1\n\t"
+        ".insn r 0x2f, 0x4, 0x14, a2, t0, a1\n\t"
+        "li t0, 0x81000000\n\t"
+        ".insn r 0x2f, 0x4, 0x14, a2, t0, a0\n\t"
+        ".insn r 0x2f, 0x4, 0x14, x0, t0, a0\n\t"
+    );
+
+    asm volatile(
         "li t0, 0x81000000\n\t"
         "ld ra, -8(t0)\n\t"
         "mv %0, ra\n\t"
